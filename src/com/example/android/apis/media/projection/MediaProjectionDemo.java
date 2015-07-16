@@ -33,6 +33,7 @@ import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.Image;
@@ -42,11 +43,13 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -61,12 +64,19 @@ import android.widget.ToggleButton;
 public class MediaProjectionDemo extends Activity {
     private static final String TAG = "MediaProjectionDemo";
     private static final int PERMISSION_CODE = 1;
+    
+    private static Resolution DEVICE_RESOLUTION;
+    
     @SuppressWarnings("serial")
 	private static final List<Resolution> RESOLUTIONS = new ArrayList<Resolution>() {{
+		add(new Resolution(320,180));
         add(new Resolution(640,360));
         add(new Resolution(960,540));
         add(new Resolution(1366,768));
         add(new Resolution(1600,900));
+        add(new Resolution(1920,1088));
+        add(new Resolution(2048,1152));
+        add(new Resolution(2560,1440));
     }};
 	@SuppressWarnings({ "serial", "unchecked" })
 	private static final Map<Integer, String> FORMATS = new LinkedHashMap<Integer, String>() {
@@ -106,6 +116,7 @@ public class MediaProjectionDemo extends Activity {
     private Surface mSurface;
     private SurfaceView mSurfaceView;
     private ToggleButton mToggle;
+    private Handler mHandler;
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,6 +126,14 @@ public class MediaProjectionDemo extends Activity {
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         mScreenDensity = metrics.densityDpi;
+        
+        if (DEVICE_RESOLUTION == null) {
+        	Resolution resolution = new Resolution(metrics.heightPixels, metrics.widthPixels);
+        	
+        	RESOLUTIONS.add(resolution);
+        	
+        	DEVICE_RESOLUTION = resolution;
+        }
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surface);
         /*
