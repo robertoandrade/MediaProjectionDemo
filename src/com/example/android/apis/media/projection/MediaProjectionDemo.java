@@ -31,9 +31,7 @@ import android.content.res.Configuration;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
 import android.media.Image;
@@ -43,13 +41,11 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -129,8 +125,10 @@ public class MediaProjectionDemo extends Activity {
         
         if (DEVICE_RESOLUTION == null) {
         	Resolution resolution = new Resolution(metrics.heightPixels, metrics.widthPixels);
+        	Resolution maxProprotional = new Resolution(2048, (int) (2048 / (1.0 * metrics.heightPixels / metrics.widthPixels)));
         	
         	RESOLUTIONS.add(resolution);
+        	RESOLUTIONS.add(maxProprotional);
         	
         	DEVICE_RESOLUTION = resolution;
         }
